@@ -31,6 +31,9 @@ public interface RealmProvider extends Provider, ClientProvider {
 
     // Note: The reason there are so many query methods here is for layering a cache on top of an persistent KeycloakSession
     MigrationModel getMigrationModel();
+
+    void clearPersistenceContext();
+
     RealmModel createRealm(String name);
     RealmModel createRealm(String id, String name);
     RealmModel getRealm(String id);

@@ -22,10 +22,7 @@ import java.util.LinkedList;
 
 import org.jboss.logging.Logger;
 import org.keycloak.migration.ModelVersion;
-import org.keycloak.models.AuthenticationExecutionModel;
-import org.keycloak.models.AuthenticationFlowModel;
-import org.keycloak.models.KeycloakSession;
-import org.keycloak.models.RealmModel;
+import org.keycloak.models.*;
 import org.keycloak.representations.idm.RealmRepresentation;
 
 /**
@@ -44,7 +41,11 @@ public class MigrateTo8_0_2 implements Migration {
 
     @Override
     public void migrate(KeycloakSession session) {
-        session.realms().getRealms().forEach(this::migrateAuthenticationFlowsWithAlternativeRequirements);
+        session.realms().getRealms().forEach(realm ->
+        {
+            session.realms().clearPersistenceContext();
+            migrateAuthenticationFlowsWithAlternativeRequirements(session.realms().getRealm(realm.getId()));
+        });
     }
 
     @Override

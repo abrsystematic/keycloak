@@ -19,12 +19,7 @@ package org.keycloak.migration.migrators;
 
 import org.jboss.logging.Logger;
 import org.keycloak.migration.ModelVersion;
-import org.keycloak.models.AuthenticationExecutionModel;
-import org.keycloak.models.AuthenticationFlowModel;
-import org.keycloak.models.ClientModel;
-import org.keycloak.models.Constants;
-import org.keycloak.models.KeycloakSession;
-import org.keycloak.models.RealmModel;
+import org.keycloak.models.*;
 import org.keycloak.representations.idm.RealmRepresentation;
 
 import java.util.Collections;
@@ -46,10 +41,14 @@ public class MigrateTo8_0_0  implements Migration {
     @Override
     public void migrate(KeycloakSession session) {
         // Perform basic realm migration first (non multi-factor authentication)
-        session.realms().getRealms().stream().forEach(realm -> migrateRealmCommon(realm));
+        session.realms().getRealms().stream().forEach(realm -> {
+            session.realms().clearPersistenceContext();
+            migrateRealmCommon(session.realms().getRealm(realm.getId()));
+        });
         // Moreover, for multi-factor authentication migrate optional execution of realm flows to subflows
         session.realms().getRealms().stream().forEach(r -> {
-            migrateRealmMFA(session, r, false);
+            session.realms().clearPersistenceContext();
+            migrateRealmMFA(session, session.realms().getRealm(r.getId()) , false);
         });
     }
 

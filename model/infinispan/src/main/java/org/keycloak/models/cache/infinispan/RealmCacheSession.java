@@ -142,6 +142,17 @@ public class RealmCacheSession implements CacheRealmProvider {
     }
 
     @Override
+    public void clearPersistenceContext() {
+        getRealmDelegate().clearPersistenceContext();
+        clear();
+        managedApplications.clear();;
+        managedClientScopes.clear();
+        managedGroups.clear();
+        managedRealms.clear();
+        managedRoles.clear();
+    }
+
+    @Override
     public RealmProvider getRealmDelegate() {
         if (!transactionActive) throw new IllegalStateException("Cannot access delegate without a transaction");
         if (realmDelegate != null) return realmDelegate;

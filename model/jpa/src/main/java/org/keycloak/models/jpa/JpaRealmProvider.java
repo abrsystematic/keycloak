@@ -68,6 +68,13 @@ public class JpaRealmProvider implements RealmProvider {
     }
 
     @Override
+    public void clearPersistenceContext() {
+        logger.info("clearing persistence context");
+        this.em.flush();
+        this.em.clear();
+    }
+
+    @Override
     public RealmModel createRealm(String name) {
         return createRealm(KeycloakModelUtils.generateId(), name);
     }

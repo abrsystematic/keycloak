@@ -19,13 +19,7 @@ package org.keycloak.migration.migrators;
 
 import org.jboss.logging.Logger;
 import org.keycloak.migration.ModelVersion;
-import org.keycloak.models.AccountRoles;
-import org.keycloak.models.ClientModel;
-import org.keycloak.models.Constants;
-import org.keycloak.models.KeycloakSession;
-import org.keycloak.models.ProtocolMapperModel;
-import org.keycloak.models.RealmModel;
-import org.keycloak.models.RoleModel;
+import org.keycloak.models.*;
 import org.keycloak.models.utils.DefaultRequiredActions;
 import org.keycloak.models.utils.KeycloakModelUtils;
 import org.keycloak.representations.idm.RealmRepresentation;
@@ -47,7 +41,10 @@ public class MigrateTo9_0_0 implements Migration {
 
     @Override
     public void migrate(KeycloakSession session) {
-        session.realms().getRealms().stream().forEach(realm -> migrateRealmCommon(realm));
+        session.realms().getRealms().stream().forEach(realm -> {
+            session.realms().clearPersistenceContext();
+            migrateRealmCommon(session.realms().getRealm(realm.getId()));
+        });
     }
 
     @Override
